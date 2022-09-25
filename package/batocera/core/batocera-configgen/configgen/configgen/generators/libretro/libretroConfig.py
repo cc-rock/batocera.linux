@@ -13,6 +13,7 @@ from utils.logger import get_logger
 from PIL import Image, ImageOps
 import utils.bezels as bezelsUtil
 import utils.videoMode as videoMode
+import utils.screenRotation as rotation
 import controllersConfig
 
 eslog = get_logger(__name__)
@@ -114,10 +115,7 @@ def createLibretroConfig(generator, system, controllers, guns, rom, bezel, shade
     if (system.isOptSet("audio_latency")):
         retroarchConfig['audio_latency'] = system.config['audio_latency']
 
-    with open("/usr/share/batocera/batocera.arch") as fb:
-        arch = fb.readline().strip()
-
-    if (system.isOptSet("display.rotate") and arch not in [ 'x86_64', 'x86', 'rpi4']):
+    if (rotation.shouldHandleRotation(system) and not rotation.isFbneoVerticalScreen(system)):
         # 0 => 0 ; 1 => 270; 2 => 180 ; 3 => 90
         if system.config["display.rotate"] == "0":
             retroarchConfig['video_rotation'] = "0"
@@ -455,6 +453,8 @@ def createLibretroConfig(generator, system, controllers, guns, rom, bezel, shade
             retroarchConfig['video_aspect_ratio_auto'] = 'false'
         elif systemConfig['ratio'] == "custom":
             retroarchConfig['video_aspect_ratio_auto'] = 'false'
+        elif rotation.shouldSetLibretroAspectRatio(system):
+            rotation.setLibretroAspectRatioForVerticalScreen(system, rom, retroarchConfig)
         else:
             retroarchConfig['video_aspect_ratio_auto'] = 'true'
             retroarchConfig['aspect_ratio_index'] = '22'

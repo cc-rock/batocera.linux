@@ -7,6 +7,7 @@ import batoceraFiles
 import csv
 from pathlib import Path
 import controllersConfig
+import utils.screenRotation as rotation
 
 def generateCoreSettings(coreSettings, system, rom, guns):
 
@@ -2045,6 +2046,8 @@ def generateCoreSettings(coreSettings, system, rom, guns):
             else:
                 status = '"disabled"'
             coreSettings.save('fbneo-lightgun-hide-crosshair', status)
+
+        rotation.setFbneoVerticalMode(system, coreSettings)    
 
         # NEOGEO
         if system.name == 'neogeo':
