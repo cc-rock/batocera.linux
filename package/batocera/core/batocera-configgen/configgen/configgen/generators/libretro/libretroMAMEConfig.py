@@ -38,7 +38,7 @@ def generateMAMEConfigs(playersControllers, system, rom):
             os.makedirs(cfgPath)
         commandLine += [ romDrivername ]
         commandLine += [ '-cfg_directory', cfgPath ]
-        commandLine += [ '-rompath', romDirname ]
+        commandLine += [ '-rompath', romDirname + ';/userdata/bios/mame/devices' ]
         pluginsToLoad = []
         if not (system.isOptSet("hiscoreplugin") and system.getOptBoolean("hiscoreplugin") == False):
             pluginsToLoad += [ "hiscore" ]
@@ -630,6 +630,7 @@ def generateMAMEPadConfig(cfgPath, playersControllers, system, messSysName, romB
             xml_input.appendChild(generateComboPortElement(pad, config, 'standard', pad.index, "UI_LEFT", "LEFT", mappings_use["JOYSTICK_LEFT"], pad.inputs[mappings_use["JOYSTICK_LEFT"]], False, "", ""))    # Left
             xml_input.appendChild(generateComboPortElement(pad, config, 'standard', pad.index, "UI_UP", "UP", mappings_use["JOYSTICK_UP"], pad.inputs[mappings_use["JOYSTICK_UP"]], False, "", ""))            # Up
             xml_input.appendChild(generateComboPortElement(pad, config, 'standard', pad.index, "UI_RIGHT", "RIGHT", mappings_use["JOYSTICK_RIGHT"], pad.inputs[mappings_use["JOYSTICK_LEFT"]], False, "", "")) # Right
+            xml_input.appendChild(generateUiConfigurePortElement(config, pad.index)) # Configure
 
         # Special case for CD-i - doesn't use default controls, map special controller
         # Keep orginal mapping functions for menus etc, create system-specific config file dor CD-i.
@@ -965,6 +966,16 @@ def generatePortElement(pad, config, nplayer, padindex, mapping, key, input, rev
     value = config.createTextNode(input2definition(pad, key, input, padindex + 1, reversed, altButtons))
     xml_newseq.appendChild(value)
     return xml_port
+
+def generateUiConfigurePortElement(config, padindex):
+    xml_port = config.createElement("port")
+    xml_port.setAttribute("type", f"UI_CONFIGURE")
+    xml_newseq = config.createElement("newseq")
+    xml_newseq.setAttribute("type", "standard")
+    xml_port.appendChild(xml_newseq)
+    value = config.createTextNode(f"JOYCODE_{padindex+1}_START JOYCODE_{padindex+1}_BUTTON3")
+    xml_newseq.appendChild(value)
+    return xml_port    
 
 def generateSpecialPortElement(pad, config, tag, nplayer, padindex, mapping, key, input, reversed, mask, default):
     # Special button input (ie mouse button to gamepad)
