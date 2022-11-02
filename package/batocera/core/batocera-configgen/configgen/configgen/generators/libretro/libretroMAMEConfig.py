@@ -1033,6 +1033,22 @@ def generateAnalogPortElement(pad, config, tag, nplayer, padindex, mapping, inck
     xml_newseq_std.appendChild(stdvalue)
     return xml_port
 
+def key2mamebutton(key, input):
+    if key == "a":
+        return f"BUTTON1"
+    elif key == "b":
+        return f"BUTTON2"
+    elif key == "x":
+        return f"BUTTON3"
+    elif key == "y":
+        return f"BUTTON4"  
+    elif key == "pageup":
+        return f"BUTTON5"
+    elif key == "pagedown":
+        return f"BUTTON6"           
+    else:
+        return f"BUTTON{int(input.id)+1}"
+
 def input2definition(pad, key, input, joycode, reversed, altButtons):
     if input.type == "button":
         if key == "start":
@@ -1040,7 +1056,7 @@ def input2definition(pad, key, input, joycode, reversed, altButtons):
         elif key == "select":
             return f"JOYCODE_{joycode}_SELECT"
         else:
-            return f"JOYCODE_{joycode}_BUTTON{int(input.id)+1}"
+            return f"JOYCODE_{joycode}_{key2mamebutton(key, input)}"
     elif input.type == "hat":
         if input.value == "1":
             return f"JOYCODE_{joycode}_HAT1UP"
