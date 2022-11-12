@@ -4,6 +4,7 @@ from pathlib import Path
 from settings.unixSettings import UnixSettings
 from utils.logger import get_logger
 from xml.dom import minidom
+from . import libretroRotation as rotation
 import Command
 import batoceraFiles
 import codecs
@@ -48,6 +49,7 @@ def generateMAMEConfigs(playersControllers, system, rom):
             commandLine += [ "-plugins", "-plugin", ",".join(pluginsToLoad) ]
         messMode = -1
         messModel = ''
+        rotation.setMameCommandLineForRotation(system, rom, commandLine)
     else:
         # Set up command line for MESS or MAMEVirtual
         softDir = "/var/run/mame_software/"

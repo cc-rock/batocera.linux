@@ -13,7 +13,7 @@ from utils.logger import get_logger
 from PIL import Image, ImageOps
 import utils.bezels as bezelsUtil
 import utils.videoMode as videoMode
-import utils.screenRotation as rotation
+from . import libretroRotation as rotation
 import controllersConfig
 
 eslog = get_logger(__name__)
@@ -115,18 +115,7 @@ def createLibretroConfig(generator, system, controllers, guns, rom, bezel, shade
     if (system.isOptSet("audio_latency")):
         retroarchConfig['audio_latency'] = system.config['audio_latency']
 
-    if (rotation.shouldHandleRotation(system) and not rotation.isFbneoVerticalScreen(system)):
-        # 0 => 0 ; 1 => 270; 2 => 180 ; 3 => 90
-        if system.config["display.rotate"] == "0":
-            retroarchConfig['video_rotation'] = "0"
-        elif system.config["display.rotate"] == "1":
-            retroarchConfig['video_rotation'] = "3"
-        elif system.config["display.rotate"] == "2":
-            retroarchConfig['video_rotation'] = "2"
-        elif system.config["display.rotate"] == "3":
-            retroarchConfig['video_rotation'] = "1"
-    else:
-        retroarchConfig['video_rotation'] = '0'
+    rotation.handleRotationInLibretroConfig(system, rom, retroarchConfig)
 
     if system.isOptSet('video_threaded') and system.getOptBoolean('video_threaded') == True:
         retroarchConfig['video_threaded'] = 'true'
@@ -453,8 +442,8 @@ def createLibretroConfig(generator, system, controllers, guns, rom, bezel, shade
             retroarchConfig['video_aspect_ratio_auto'] = 'false'
         elif systemConfig['ratio'] == "custom":
             retroarchConfig['video_aspect_ratio_auto'] = 'false'
-        elif rotation.shouldSetLibretroAspectRatio(system):
-            rotation.setLibretroAspectRatioForVerticalScreen(system, rom, retroarchConfig)
+        elif rotation.shouldSetLibretroAspectRatio(system, rom):
+            rotation.setLibretroAspectRatioForRotation(system, rom, retroarchConfig)
         else:
             retroarchConfig['video_aspect_ratio_auto'] = 'true'
             retroarchConfig['aspect_ratio_index'] = '22'

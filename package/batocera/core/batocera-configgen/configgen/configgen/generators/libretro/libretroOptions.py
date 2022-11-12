@@ -7,7 +7,7 @@ import batoceraFiles
 import csv
 from pathlib import Path
 import controllersConfig
-import utils.screenRotation as rotation
+from . import libretroRotation as rotation
 
 def generateCoreSettings(coreSettings, system, rom, guns):
 
@@ -729,7 +729,7 @@ def generateCoreSettings(coreSettings, system, rom, guns):
         if system.isOptSet('mame2003-plus_tate_mode'):
             coreSettings.save('mame2003-plus_tate_mode', system.config['mame2003-plus_tate_mode'])
         else:
-            coreSettings.save('mame2003-plus_tate_mode', '"disabled"')
+            rotation.setMame2003PlusTateMode(system, rom, coreSettings)
         # NEOGEO Bios
         if system.isOptSet('mame2003-plus_neogeo_bios'):
             coreSettings.save('mame2003-plus_neogeo_bios', system.config['mame2003-plus_neogeo_bios'])
@@ -2047,7 +2047,7 @@ def generateCoreSettings(coreSettings, system, rom, guns):
                 status = '"disabled"'
             coreSettings.save('fbneo-lightgun-hide-crosshair', status)
 
-        rotation.setFbneoVerticalMode(system, coreSettings)    
+        rotation.setFbneoVerticalMode(system, rom, coreSettings)    
 
         # NEOGEO
         if system.name == 'neogeo':
