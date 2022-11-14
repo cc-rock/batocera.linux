@@ -58,4 +58,13 @@ def setLibretroAspectRatioForRotation(system, rom, retroarchConfig):
 def setMameCommandLineForRotation(system, rom, commandLine):
     if isVerticalGame(system, rom):
         commandLine += ['-autorol']  
-            
+
+def handleVerticalShader(system, rom):
+    isVertScreen = isVerticalScreen(system)
+    isVertGame = isVerticalGame(system, rom)
+    if (((not isVertScreen) and isVertGame) or (isVertScreen and (not isVertGame))):
+        if "shaderset" in system.config:
+            if system.config["shaderset"] != "none":
+                vertShaderSet = system.config["shaderset"] + "-vertical"
+                if os.path.exists("/userdata/shaders/configs/" + vertShaderSet + "/rendering-defaults.yml") or os.path.exists("/usr/share/batocera/shaders/configs/" + vertShaderSet + "/rendering-defaults.yml"):
+                    system.config["shaderset"] = vertShaderSet          

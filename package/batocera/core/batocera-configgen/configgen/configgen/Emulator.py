@@ -4,6 +4,7 @@ from settings.unixSettings import UnixSettings
 import xml.etree.ElementTree as ET
 import yaml
 import collections
+import generators.libretro.libretroRotation as rotation
 
 from utils.logger import get_logger
 eslog = get_logger(__name__)
@@ -50,6 +51,8 @@ class Emulator():
             self.config["emulator-forced"] = True
         if "core" in globalSettings or "core" in systemSettings or "core" in gameSettings:
             self.config["core-forced"] = True
+
+        rotation.handleVerticalShader(self, rom)
 
         # update renderconfig
         self.renderconfig = {}
