@@ -22,18 +22,28 @@ def isVerticalGame(system, rom):
 def handleRotationInLibretroConfig(system, rom, retroarchConfig):
     if (hasXrandrRotation()):
         return
-    isVertGame = isVerticalGame(system, rom)
     rotationOption = "0"
     if (system.isOptSet("display.rotate")):
-        rotationOption = system.getOptString("display.rotate")
-    if (rotationOption == "0"):
-        retroarchConfig["video_rotation"] = "3" if isVertGame else "0"
-    if (rotationOption == "1"):
-        retroarchConfig["video_rotation"] = "2" if isVertGame else "3"
-    if (rotationOption == "2"):
-        retroarchConfig["video_rotation"] = "1" if isVertGame else "2"
-    if (rotationOption == "3"):
-        retroarchConfig["video_rotation"] = "0" if isVertGame else "1"     
+        rotationOption = system.getOptString("display.rotate")    
+    if (system.config["core"] == "mame0139"):
+        if (rotationOption == "0"):
+            retroarchConfig["video_rotation"] = "0"
+        if (rotationOption == "1"):
+            retroarchConfig["video_rotation"] = "3"
+        if (rotationOption == "2"):
+            retroarchConfig["video_rotation"] = "2"
+        if (rotationOption == "3"):
+            retroarchConfig["video_rotation"] = "1" 
+    else:            
+        isVertGame = isVerticalGame(system, rom)
+        if (rotationOption == "0"):
+            retroarchConfig["video_rotation"] = "3" if isVertGame else "0"
+        if (rotationOption == "1"):
+            retroarchConfig["video_rotation"] = "2" if isVertGame else "3"
+        if (rotationOption == "2"):
+            retroarchConfig["video_rotation"] = "1" if isVertGame else "2"
+        if (rotationOption == "3"):
+            retroarchConfig["video_rotation"] = "0" if isVertGame else "1"     
 
 def setFbneoVerticalMode(system, rom, coreSettings):
     if ((not hasXrandrRotation()) and isVerticalGame(system, rom) and system.name == "fbneo"):
@@ -50,10 +60,15 @@ def setMame2003PlusTateMode(system, rom, coreSettings):
 def shouldSetLibretroAspectRatio(system, rom):
     isVertScreen = isVerticalScreen(system)
     isVertGame = isVerticalGame(system, rom)
+    if (system.config["core"] == "mame0139"):
+        return isVertScreen
     return not (hasXrandrRotation() or ((not isVertScreen) and (not isVertGame)) or (isVertScreen and isVertGame))       
 
 def setLibretroAspectRatioForRotation(system, rom, retroarchConfig):
-    retroarchConfig['aspect_ratio_index'] = '8'   
+    if (system.config["core"] == "mame0139" and isVerticalGame(system, rom)):
+        retroarchConfig['aspect_ratio_index'] = '0'
+    else:
+        retroarchConfig['aspect_ratio_index'] = '8'   
 
 def setMameCommandLineForRotation(system, rom, commandLine):
     if isVerticalGame(system, rom):
