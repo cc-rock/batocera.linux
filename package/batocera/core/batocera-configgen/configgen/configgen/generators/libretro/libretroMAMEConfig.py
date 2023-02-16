@@ -322,7 +322,7 @@ def generateMAMEConfigs(playersControllers, system, rom):
     commandLine += [ "-samplepath", "/userdata/bios/mame/samples/" ]
 
     # Write command line file
-    cmdFilename = "/var/run/{}.cmd".format(corePath)
+    cmdFilename = "/var/run/{}-{}.cmd".format(corePath, romBasename[0:8])
     if os.path.exists(cmdFilename):
         os.remove(cmdFilename)
     cmdFile = open(cmdFilename, "w")
